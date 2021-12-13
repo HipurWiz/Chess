@@ -31,7 +31,7 @@ public class App extends JPanel {
     /*
     syntax:
     first character = piece color (white or black)
-    second character = type of piece (k=king, q=queen, r=rook, b=bishop, kn = knight, p=pawn)
+    second character = type of piece (k=king, q=queen, r=rook, b=bishop, n = knight, p=pawn)
     "ee" = empty
     */
     static String[][] board = new String[8][8];
@@ -178,9 +178,9 @@ public class App extends JPanel {
             g.drawImage(blackknight, 200, 100, this);
             board[1][0] = "bkn";
             g.drawImage(blackknight, 700, 100, this);
-            board[6][0] = "bkn";
+            board[6][0] = "bn";
             g.drawImage(whiteknight, 200, 800, this);
-            board[1][7] = "wkn";
+            board[1][7] = "wn";
             g.drawImage(whiteknight, 700, 800, this);
             board[6][7] = "wkn";
 
