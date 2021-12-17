@@ -40,6 +40,8 @@ public class App extends JPanel {
     static boolean pieceSelected = false;
     static int y = 0;
     static int x = 0;
+    static int selectedPieceX = 0;
+    static int selectedPieceY = 0;
 
     public App() {
         try {                
@@ -71,10 +73,13 @@ public class App extends JPanel {
                 y = e.getX();
                 //for some reason it's offset by 30 idk why
                 x = e.getY()-30;
-                selectedPiece = board[y/100-1][x/100-1];
+                if (board[y/100-1][x/100-1] != "ee" && !pieceSelected) {
+                    selectedPiece = board[y/100-1][x/100-1];
+                    selectedPieceX = x;
+                    selectedPieceY = y;
+                }
                 y = y/100-1;
                 x = x/100-1;
-                pieceSelected = true;
                 boardComplete = true;
                 frame.repaint();
             }
@@ -193,100 +198,184 @@ public class App extends JPanel {
             g.drawImage(whiteking, 500+kingoffset, 800, this);
             board[4][7] = "wk";
         }
-        
 
-        /*
-        for (int i=0; i<8; i++) {
-            for (int j=0; j<8; j++) {
-                System.out.print(board[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-        */
-
-        //if statements
         if (boardComplete) {
-            //draw the board but with the selected square highlighted
-            Color colorOne = Color.WHITE;
-            Color colorTwo = Color.decode("#4B77BE");
-            Boolean colorBool;
-            for (int i=0; i<8; i++) {
-                if (i%2 == 0) {
-                    colorBool = true;
-                } else {
-                    colorBool = false;
-                }
-                for (int j=0; j<8; j++) {
-                    //board drawing
-                    if (colorBool) {
-                        g.setColor(colorOne);
-                        colorBool = false;
-                    } else {
-                        g.setColor(colorTwo);
+            //pieceselected and making a move
+            if (pieceSelected) {
+                //draw the board
+                Color colorOne = Color.WHITE;
+                Color colorTwo = Color.decode("#4B77BE");
+                Boolean colorBool;
+                for (int i=0; i<8; i++) {
+                    if (i%2 == 0) {
                         colorBool = true;
+                    } else {
+                        colorBool = false;
                     }
-                    if (j == x && i == y) {
-                        g.setColor(Color.YELLOW);
+                    for (int j=0; j<8; j++) {
+                        //board drawing
+                        if (colorBool) {
+                            g.setColor(colorOne);
+                            colorBool = false;
+                        } else {
+                            g.setColor(colorTwo);
+                            colorBool = true;
+                        }
+                        g.fillRect(100+i*100, 100+j*100, 100, 100);
+                        //draw the move in (doesn't check if the move is legal yet)
+                        if (j == x && i == y) {
+                            //change the array so in the next step you draw the move in
+                            board[selectedPieceY/100-1][selectedPieceX/100-1] = "ee";
+                            if (selectedPiece != "ee") {
+                                board[y][x] = selectedPiece;
+                                selectedPiece = "";
+                            }
+                            
+                        }
                     }
-                    g.fillRect(100+i*100, 100+j*100, 100, 100);
-
-                    
+                }
+                //pieces
+                for (int i=0; i<8; i++) {
+                    for (int j=0; j<8; j++) {
+                        //piece drawing
+                        String pieceOnSquare = board[j][i];
+                        String pieceColor = pieceOnSquare.substring(0,1);
+                        String pieceType = pieceOnSquare.substring(1,2);
+                        if (pieceColor.equals("w")) {
+                            if (pieceType.equals("k")) {
+                                g.drawImage(whiteking, 100+100*j+kingoffset, 100+100*i, this);
+                            }
+                            if (pieceType.equals("q")) {
+                                g.drawImage(whitequeen, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("b")) {
+                                g.drawImage(whitebishop, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("n")) {
+                                g.drawImage(whiteknight, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("r")) {
+                                g.drawImage(whiterook, 100+100*j+rookoffset[0], 100+100*i+rookoffset[1], this);
+                            }
+                            if (pieceType.equals("p")) {
+                                g.drawImage(whitepawn, 100+100*j+pawnoffset[0], 100+100*i+pawnoffset[1], this);
+                            }
+                        }
+                        if (pieceColor.equals("b")) {
+                            if (pieceType.equals("k")) {
+                                g.drawImage(blackking, 100+100*j+kingoffset, 100+100*i, this);
+                            }
+                            if (pieceType.equals("q")) {
+                                g.drawImage(blackqueen, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("b")) {
+                                g.drawImage(blackbishop, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("n")) {
+                                g.drawImage(blackknight, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("r")) {
+                                g.drawImage(blackrook, 100+100*j+rookoffset[0], 100+100*i+rookoffset[1], this);
+                            }
+                            if (pieceType.equals("p")) {
+                                g.drawImage(blackpawn, 100+100*j+pawnoffset[0], 100+100*i+pawnoffset[1], this);
+                            }
+                        }
+                    }
                 }
             }
-            //pieces
-            for (int i=0; i<8; i++) {
-                for (int j=0; j<8; j++) {
-                    //piece drawing
-                    String pieceOnSquare = board[j][i];
-                    String pieceColor = pieceOnSquare.substring(0,1);
-                    String pieceType = pieceOnSquare.substring(1,2);
-                    if (pieceColor.equals("w")) {
-                        if (pieceType.equals("k")) {
-                            g.drawImage(whiteking, 100+100*j+kingoffset, 100+100*i, this);
-                        }
-                        if (pieceType.equals("q")) {
-                            g.drawImage(whitequeen, 100+100*j, 100+100*i, this);
-                        }
-                        if (pieceType.equals("b")) {
-                            g.drawImage(whitebishop, 100+100*j, 100+100*i, this);
-                        }
-                        if (pieceType.equals("n")) {
-                            g.drawImage(whiteknight, 100+100*j, 100+100*i, this);
-                        }
-                        if (pieceType.equals("r")) {
-                            g.drawImage(whiterook, 100+100*j+rookoffset[0], 100+100*i+rookoffset[1], this);
-                        }
-                        if (pieceType.equals("p")) {
-                            g.drawImage(whitepawn, 100+100*j+pawnoffset[0], 100+100*i+pawnoffset[1], this);
-                        }
+
+            //no piece selected
+            if (!pieceSelected) {
+                //draw the board but with the selected square highlighted
+                Color colorOne = Color.WHITE;
+                Color colorTwo = Color.decode("#4B77BE");
+                Boolean colorBool;
+                for (int i=0; i<8; i++) {
+                    if (i%2 == 0) {
+                        colorBool = true;
+                    } else {
+                        colorBool = false;
                     }
-                    if (pieceColor.equals("b")) {
-                        if (pieceType.equals("k")) {
-                            g.drawImage(blackking, 100+100*j+kingoffset, 100+100*i, this);
+                    for (int j=0; j<8; j++) {
+                        //board drawing
+                        if (colorBool) {
+                            g.setColor(colorOne);
+                            colorBool = false;
+                        } else {
+                            g.setColor(colorTwo);
+                            colorBool = true;
                         }
-                        if (pieceType.equals("q")) {
-                            g.drawImage(blackqueen, 100+100*j, 100+100*i, this);
+                        //yellow
+                        if (y==i && x==j) {
+                            if (board[y][x] != "ee") {
+                                g.setColor(Color.YELLOW);
+                            } else if (board[y][x] == "ee") {
+                                selectedPiece = "ee";
+                            }
                         }
-                        if (pieceType.equals("b")) {
-                            g.drawImage(blackbishop, 100+100*j, 100+100*i, this);
+                        g.fillRect(100+i*100, 100+j*100, 100, 100);
+                        
+                        
+                    }
+                }
+                //pieces
+                for (int i=0; i<8; i++) {
+                    for (int j=0; j<8; j++) {
+                        //piece drawing
+                        String pieceOnSquare = board[j][i];
+                        String pieceColor = pieceOnSquare.substring(0,1);
+                        String pieceType = pieceOnSquare.substring(1,2);
+                        if (pieceColor.equals("w")) {
+                            if (pieceType.equals("k")) {
+                                g.drawImage(whiteking, 100+100*j+kingoffset, 100+100*i, this);
+                            }
+                            if (pieceType.equals("q")) {
+                                g.drawImage(whitequeen, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("b")) {
+                                g.drawImage(whitebishop, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("n")) {
+                                g.drawImage(whiteknight, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("r")) {
+                                g.drawImage(whiterook, 100+100*j+rookoffset[0], 100+100*i+rookoffset[1], this);
+                            }
+                            if (pieceType.equals("p")) {
+                                g.drawImage(whitepawn, 100+100*j+pawnoffset[0], 100+100*i+pawnoffset[1], this);
+                            }
                         }
-                        if (pieceType.equals("n")) {
-                            g.drawImage(blackknight, 100+100*j, 100+100*i, this);
-                        }
-                        if (pieceType.equals("r")) {
-                            g.drawImage(blackrook, 100+100*j+rookoffset[0], 100+100*i+rookoffset[1], this);
-                        }
-                        if (pieceType.equals("p")) {
-                            g.drawImage(blackpawn, 100+100*j+pawnoffset[0], 100+100*i+pawnoffset[1], this);
+                        if (pieceColor.equals("b")) {
+                            if (pieceType.equals("k")) {
+                                g.drawImage(blackking, 100+100*j+kingoffset, 100+100*i, this);
+                            }
+                            if (pieceType.equals("q")) {
+                                g.drawImage(blackqueen, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("b")) {
+                                g.drawImage(blackbishop, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("n")) {
+                                g.drawImage(blackknight, 100+100*j, 100+100*i, this);
+                            }
+                            if (pieceType.equals("r")) {
+                                g.drawImage(blackrook, 100+100*j+rookoffset[0], 100+100*i+rookoffset[1], this);
+                            }
+                            if (pieceType.equals("p")) {
+                                g.drawImage(blackpawn, 100+100*j+pawnoffset[0], 100+100*i+pawnoffset[1], this);
+                            }
                         }
                     }
                 }
+            }
+
+            if (pieceSelected) {
+                pieceSelected = false;
+            } else {
+                pieceSelected = true;
             }
         }
     }
-
-    
-    
 }
 

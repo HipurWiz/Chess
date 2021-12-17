@@ -9,3 +9,4 @@ I am working on a Chess application that you can run using Java. Because the cod
  - December 11, 2021 - created chess board and added pieces.
  - December 12, 2021 - click detection and setting up piece movement
  - December 14, 2021 - redrawing after click
+ - December 16, 2021 - you can now make moves but it doesn't check if it's legal or not
